@@ -11,7 +11,7 @@ const { authenticateToken } = authMiddlewares;
 router.use('/api/auth', authRouter);
 
 // students
-router.use('/api/students', authenticateToken, studentsRouter);
+router.use('/api/students', studentsRouter);
 
 // pages
 router.use('/pages', pagesRouter);

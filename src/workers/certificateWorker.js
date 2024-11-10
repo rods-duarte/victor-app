@@ -1,7 +1,7 @@
 import amqp from 'amqplib';
-import { certificateRepository } from '../repositories';
+import { certificateServices } from '../services/index.js';
 
-export async function sendToQueue(user) {
+export async function sendToQueue(certificateId) {
     const connection = await amqp.connect(process.env.AMQP_URL);
     const channel = await connection.createChannel();
     const queue = 'certificate';
@@ -10,7 +10,7 @@ export async function sendToQueue(user) {
         durable: true
     });
 
-    channel.sendToQueue(queue, Buffer.from(JSON.stringify(user)));
+    channel.sendToQueue(queue, Buffer.from(JSON.stringify({id: certificateId})));
 
     setTimeout(() => {
         connection.close();
@@ -27,9 +27,9 @@ export async function consumeQueue() {
     });
 
     channel.consume(queue, async message => {
-        const user = JSON.parse(message.content.toString());
+        const certificateData = JSON.parse(message.content.toString());
         
-        await certificateRepository.createCertificate(user);
+        await certificateServices.createCertificatePdf(certificateData.id);
 
         channel.ack(message);
     });

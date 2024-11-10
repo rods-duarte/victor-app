@@ -16,7 +16,7 @@ CREATE TABLE certificates(
     "data_inicio" DATE NOT NULL,
     "data_fim" DATE NOT NULL,
     "carga_horaria" INTEGER NOT NULL,
-    "pdf_path" CHAR(100) NOT NULL,
+    "pdf_path" CHAR(100),
     "status" CHAR(100) DEFAULT 'pendente',
     "descricao" TEXT NOT NULL,
     "user_id" INTEGER REFERENCES users(id),

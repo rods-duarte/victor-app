@@ -16,3 +16,10 @@ export function findUserByEmail(email) {
     `;
     return db.query(query, [email]);
 }
+
+export function findUserById(id) {
+    const query = `
+        SELECT * FROM users WHERE id = $1
+    `;
+    return db.query(query, [id]);
+}

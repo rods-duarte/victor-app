@@ -1,17 +1,36 @@
-import amqp from 'amqplib';
 
-export async function sendToQueue(user) {
-    const connection = await amqp.connect(process.env.AMQP_URL);
-    const channel = await connection.createChannel();
-    const queue = 'certificate';
+import path from "path";
+import fs from "fs";
+import ejs from "ejs";
+import htmlPdf from "html-pdf";
+import { fileURLToPath } from "url";
+import { certificateWorker } from "../workers/index.js";
+import { certificateRepository } from "../repositories/index.js";
 
-    await channel.assertQueue(queue, {
-        durable: true
-    });
+const { sendToQueue } = certificateWorker;
 
-    channel.sendToQueue(queue, Buffer.from(JSON.stringify(user)));
+// Obter o diretório atual
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-    setTimeout(() => {
-        connection.close();
-    }, 500);
+
+export async function createCertificate(certificateData) {
+    const certificate = await certificateRepository.createCertificate(certificateData);
+
+    sendToQueue(certificate.id);
+}
+
+export async function createCertificatePdf(certificateId) {
+    const templatePath = path.join(__dirname, '../views/certificado.ejs');
+    const outputPath = path.join(__dirname, `../certificados/certificado-${certificateId}.pdf`);
+
+    const certificateData = await certificateRepository.getCertificateById(certificateId);
+    console.log("🚀 ~ createCertificatePdf ~ certificateData.rows[0]:", certificateData.rows[0])
+
+    const template = fs.readFileSync(templatePath, 'utf-8');
+    const certificateHtml = ejs.render(template, certificateData.rows[0]);
+
+    htmlPdf.create(certificateHtml).toFile(outputPath, async (err, res) => {
+        await certificateRepository.addPdfPath(certificateId, outputPath);
+    })
 }
