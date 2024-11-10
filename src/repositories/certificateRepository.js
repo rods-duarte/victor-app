@@ -1,6 +1,6 @@
 import db from '../config/database.js';
 
-export function createUser(user) {
+export function createCertificate(user) {
     const { nome, email, senha, rg, nacionalidade, estado, dataNascimento } = user; 
     const query = `
         INSERT INTO users (nome, email, senha, rg, nacionalidade, estado, data_nascimento)
@@ -8,11 +8,4 @@ export function createUser(user) {
     `;
     
     return db.query(query, [nome, email, senha, rg, nacionalidade, estado, dataNascimento]);
-}
-
-export function findUserByEmail(email) {
-    const query = `
-        SELECT * FROM users WHERE email = $1
-    `;
-    return db.query(query, [email]);
 }

@@ -36,3 +36,16 @@ export async function loginUser(user) {
 
     return { success: 'User logged in successfully', user: userFound, token };
 }
+
+export async function getUserById(id) {
+    const userExists = await userRepository.findUserById(id);
+
+    if (userExists.rowCount === 0) {
+        return { error: 'User not found' };
+    }
+
+    const userFound = userExists.rows[0];
+    delete userFound.senha;
+
+    return { success: 'User found', user: userFound };
+}
