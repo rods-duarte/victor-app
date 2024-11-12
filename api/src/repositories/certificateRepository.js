@@ -1,10 +1,10 @@
 import db from '../config/database.js';
 
 export function createCertificate(certificateData) {
-    const { nomeCurso, dataInicio, dataFim, cargaHoraria, descricao, userId } = certificateData;
-    const query = `INSERT INTO certificates (nome_curso, data_inicio, data_fim, carga_horaria, descricao, user_id) VALUES ($1, $2, $3, $4, $5, $6)`;
+    const { nomeCurso, dataInicio, dataFim, cargaHoraria, descricao, user } = certificateData;
+    const query = `INSERT INTO certificates (nome_curso, data_inicio, data_fim, carga_horaria, descricao, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
 
-    return db.query(query, [nomeCurso, dataInicio, dataFim, cargaHoraria, descricao, userId]);
+    return db.query(query, [nomeCurso, dataInicio, dataFim, cargaHoraria, descricao, user.id]);
 }
 
 export function getCertificateById(certificateId) {

@@ -16,7 +16,7 @@ export async function createCertificate(req, res) {
 
     const certificateData = {
         ...body,
-        userId: user.id
+        user
     }
 
     await certificateServices.createCertificate(certificateData);

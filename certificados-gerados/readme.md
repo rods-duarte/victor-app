@@ -1,0 +1,1 @@
+Aqui sera populado com os certificados gerados pelo worker quando executado atraves do docker-compose.
